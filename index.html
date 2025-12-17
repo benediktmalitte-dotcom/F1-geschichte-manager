@@ -26,6 +26,25 @@
       
       /* WordPress Embed Support */
       #root { width: 100%; min-height: 100vh; display: flex; flex-direction: column; }
+      
+      /* Iframe/Embedded Context Support */
+      html.embedded, html.embedded body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      
+      html.embedded #root {
+        min-height: 100%;
+        height: 100%;
+      }
+      
+      /* Prevent scroll issues in WordPress */
+      @media (max-width: 768px) {
+        body { -webkit-overflow-scrolling: touch; }
+      }
     </style>
     <script type="importmap">
 {

@@ -5,6 +5,7 @@ import react from '@vitejs/plugin-react';
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
     return {
+      base: './', // Use relative paths for WordPress embedding
       server: {
         port: 3000,
         host: '0.0.0.0',
@@ -17,6 +18,21 @@ export default defineConfig(({ mode }) => {
       resolve: {
         alias: {
           '@': path.resolve(__dirname, '.'),
+        }
+      },
+      build: {
+        // Optimize for WordPress embedding
+        outDir: 'dist',
+        assetsDir: 'assets',
+        // Ensure compatibility with older browsers
+        target: 'es2015',
+        // Generate source maps for debugging
+        sourcemap: false,
+        // Optimize chunk size for faster loading
+        rollupOptions: {
+          output: {
+            manualChunks: undefined,
+          }
         }
       }
     };
