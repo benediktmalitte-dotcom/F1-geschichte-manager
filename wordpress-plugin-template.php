@@ -80,22 +80,28 @@ class F1_Manager_Plugin {
             'shadow' => get_option('f1_manager_shadow', 'true'),
         ), $atts, 'f1_manager');
         
+        // Sanitize and validate attributes
+        $height = $this->sanitize_css_value($atts['height']);
+        $width = $this->sanitize_css_value($atts['width']);
+        $border = $this->sanitize_css_value($atts['border']);
+        $shadow = ($atts['shadow'] === 'true') ? 'true' : 'false';
+        
         // Spiel-URL
         $game_url = F1_MANAGER_GAME_URL . 'index.html';
         
         // Zusätzliche Styles basierend auf Optionen
         $additional_styles = '';
-        if ($atts['shadow'] === 'true') {
+        if ($shadow === 'true') {
             $additional_styles .= 'box-shadow: 0 10px 40px rgba(0,0,0,0.3); border-radius: 8px;';
         }
         
         // HTML generieren
         ob_start();
         ?>
-        <div class="f1-manager-wrapper" style="width: <?php echo esc_attr($atts['width']); ?>; height: <?php echo esc_attr($atts['height']); ?>; position: relative; margin: 20px auto; <?php echo esc_attr($additional_styles); ?>">
+        <div class="f1-manager-wrapper" style="width: <?php echo esc_attr($width); ?>; height: <?php echo esc_attr($height); ?>; position: relative; margin: 20px auto; <?php echo esc_attr($additional_styles); ?>">
             <iframe 
                 src="<?php echo esc_url($game_url); ?>"
-                style="width: 100%; height: 100%; border: <?php echo esc_attr($atts['border']); ?>; display: block; border-radius: inherit;"
+                style="width: 100%; height: 100%; border: <?php echo esc_attr($border); ?>; display: block; border-radius: inherit;"
                 allowfullscreen
                 allow="fullscreen"
                 title="F1 Geschichte Manager"
@@ -104,6 +110,18 @@ class F1_Manager_Plugin {
         </div>
         <?php
         return ob_get_clean();
+    }
+    
+    /**
+     * Sanitizes CSS values to prevent XSS
+     */
+    private function sanitize_css_value($value) {
+        // Allow only safe CSS values: numbers, px, %, vh, vw, em, rem, and some keywords
+        if (preg_match('/^(auto|none|inherit|initial|\d+(\.\d+)?(px|%|vh|vw|em|rem)|(\d+px\s+solid\s+#[0-9a-fA-F]{3,6}))$/', $value)) {
+            return $value;
+        }
+        // Default fallback
+        return 'auto';
     }
     
     /**
@@ -125,18 +143,40 @@ class F1_Manager_Plugin {
      * Registriert Plugin-Einstellungen
      */
     public function register_settings() {
-        register_setting('f1_manager_settings', 'f1_manager_height');
-        register_setting('f1_manager_settings', 'f1_manager_width');
-        register_setting('f1_manager_settings', 'f1_manager_border');
-        register_setting('f1_manager_settings', 'f1_manager_shadow');
+        register_setting('f1_manager_settings', 'f1_manager_height', array(
+            'sanitize_callback' => array($this, 'sanitize_css_value')
+        ));
+        register_setting('f1_manager_settings', 'f1_manager_width', array(
+            'sanitize_callback' => array($this, 'sanitize_css_value')
+        ));
+        register_setting('f1_manager_settings', 'f1_manager_border', array(
+            'sanitize_callback' => array($this, 'sanitize_css_value')
+        ));
+        register_setting('f1_manager_settings', 'f1_manager_shadow', array(
+            'sanitize_callback' => array($this, 'sanitize_checkbox')
+        ));
+    }
+    
+    /**
+     * Sanitizes checkbox values
+     */
+    public function sanitize_checkbox($value) {
+        return ($value === 'true' || $value === '1' || $value === 1) ? 'true' : 'false';
     }
     
     /**
      * Einstellungsseite
      */
     public function settings_page() {
-        // Prüfe ob Game-Dateien existieren
-        $game_exists = file_exists(F1_MANAGER_GAME_DIR . 'index.html');
+        // Prüfe ob Game-Dateien existieren - mit sicherer Pfadvalidierung
+        $game_path = wp_normalize_path(F1_MANAGER_GAME_DIR . 'index.html');
+        $base_path = wp_normalize_path(F1_MANAGER_GAME_DIR);
+        
+        // Sicherheitsprüfung: Stelle sicher, dass der Pfad innerhalb des erwarteten Verzeichnisses liegt
+        $game_exists = false;
+        if (strpos($game_path, $base_path) === 0) {
+            $game_exists = file_exists($game_path);
+        }
         ?>
         <div class="wrap">
             <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
@@ -185,7 +225,11 @@ class F1_Manager_Plugin {
                         <tr>
                             <th scope="row">Schatten anzeigen</th>
                             <td>
-                                <input type="checkbox" name="f1_manager_shadow" value="true" <?php checked(get_option('f1_manager_shadow', 'true'), 'true'); ?> />
+                                <label for="f1_manager_shadow">
+                                    <input type="hidden" name="f1_manager_shadow" value="false" />
+                                    <input type="checkbox" id="f1_manager_shadow" name="f1_manager_shadow" value="true" <?php checked(get_option('f1_manager_shadow', 'true'), 'true'); ?> />
+                                    Schatten um das Spiel anzeigen
+                                </label>
                                 <p class="description">Fügt einen Schatten um das Spiel hinzu</p>
                             </td>
                         </tr>
