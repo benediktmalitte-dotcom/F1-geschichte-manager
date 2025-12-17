@@ -28,12 +28,6 @@ export default defineConfig(({ mode }) => {
         target: 'es2015',
         // Generate source maps for debugging
         sourcemap: false,
-        // Optimize chunk size for faster loading
-        rollupOptions: {
-          output: {
-            manualChunks: undefined,
-          }
-        }
       }
     };
 });

@@ -121,8 +121,8 @@ class F1_Manager_Plugin {
             // Numbers with units
             '/^(auto|none|inherit|initial)$/',
             '/^\d+(\.\d+)?(px|%|vh|vw|em|rem)$/',
-            // Border values (including more styles and colors)
-            '/^\d+px\s+(solid|dashed|dotted|double|groove|ridge|inset|outset)\s+(#[0-9a-fA-F]{3,6}|rgb\(\d+,\s*\d+,\s*\d+\)|rgba\(\d+,\s*\d+,\s*\d+,\s*[\d.]+\)|transparent|currentColor)$/',
+            // Border values (strict validation for security)
+            '/^\d+px\s+(solid|dashed|dotted|double|groove|ridge|inset|outset)\s+(#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})|rgb\(\d{1,3},\s*\d{1,3},\s*\d{1,3}\)|rgba\(\d{1,3},\s*\d{1,3},\s*\d{1,3},\s*[01](\.\d+)?\)|transparent|currentColor)$/',
         );
         
         foreach ($allowed_patterns as $pattern) {
@@ -191,7 +191,8 @@ class F1_Manager_Plugin {
         $game_exists = false;
         if ($real_game_path !== false && $real_base_dir !== false) {
             // Stelle sicher, dass der Pfad innerhalb des erwarteten Verzeichnisses liegt
-            if (strpos($real_game_path, $real_base_dir) === 0) {
+            // Verwende stripos für case-insensitive Vergleich (Windows-Kompatibilität)
+            if (stripos($real_game_path, $real_base_dir) === 0) {
                 $game_exists = file_exists($real_game_path);
             }
         }
