@@ -1,8 +1,10 @@
 {
   "name": "formel1-geschichte.de-manager-sfa",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
+  "description": "F1 Management Browser Game - WordPress Integration Ready",
+  "keywords": ["f1", "formula-1", "racing", "manager", "game", "wordpress", "browser-game"],
   "scripts": {
     "dev": "vite",
     "build": "vite build",

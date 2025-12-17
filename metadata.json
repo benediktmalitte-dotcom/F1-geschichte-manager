@@ -1,5 +1,9 @@
 {
   "name": "Formel1-Geschichte.de Manager SFA",
-  "description": "Ein optimierter Motorsport-Manager für die Einbindung in WordPress als Single File Application.",
+  "description": "Ein optimierter Motorsport-Manager für die Einbindung in WordPress als Single File Application. Vollständig browser-basiert mit LocalStorage-Speicherung.",
+  "version": "1.0.0",
+  "keywords": ["F1", "Formel 1", "Manager", "Game", "WordPress", "Browser Game", "Racing", "Motorsport"],
+  "wordpress_compatible": true,
+  "embedding_methods": ["iframe", "shortcode", "plugin"],
   "requestFramePermissions": []
 }
