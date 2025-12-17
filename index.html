@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Formel1-Geschichte.de Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      :root {
+        --f1-red: #e10600;
+        --f1-dark: #111111;
+        --f1-black: #000000;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--f1-black);
+        color: #ffffff;
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      }
+      /* Scrollbar Styling */
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: #1a1a1a; }
+      ::-webkit-scrollbar-thumb { background: var(--f1-red); border-radius: 0px; }
+      
+      /* WordPress Embed Support */
+      #root { width: 100%; min-height: 100vh; display: flex; flex-direction: column; }
+    </style>
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.0.0-rc-69d4b800-20241021?dev",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0-rc-69d4b800-20241021/client?dev",
+    "react-dom": "https://esm.sh/react-dom@19.0.0-rc-69d4b800-20241021?dev",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
+  }
+}
+</script>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="module" src="./index.tsx"></script>
+</body>
+</html>
