@@ -116,10 +116,21 @@ class F1_Manager_Plugin {
      * Sanitizes CSS values to prevent XSS
      */
     private function sanitize_css_value($value) {
-        // Allow only safe CSS values: numbers, px, %, vh, vw, em, rem, and some keywords
-        if (preg_match('/^(auto|none|inherit|initial|\d+(\.\d+)?(px|%|vh|vw|em|rem)|(\d+px\s+solid\s+#[0-9a-fA-F]{3,6}))$/', $value)) {
-            return $value;
+        // Allow only safe CSS values
+        $allowed_patterns = array(
+            // Numbers with units
+            '/^(auto|none|inherit|initial)$/',
+            '/^\d+(\.\d+)?(px|%|vh|vw|em|rem)$/',
+            // Border values (including more styles and colors)
+            '/^\d+px\s+(solid|dashed|dotted|double|groove|ridge|inset|outset)\s+(#[0-9a-fA-F]{3,6}|rgb\(\d+,\s*\d+,\s*\d+\)|rgba\(\d+,\s*\d+,\s*\d+,\s*[\d.]+\)|transparent|currentColor)$/',
+        );
+        
+        foreach ($allowed_patterns as $pattern) {
+            if (preg_match($pattern, $value)) {
+                return $value;
+            }
         }
+        
         // Default fallback
         return 'auto';
     }
@@ -161,7 +172,8 @@ class F1_Manager_Plugin {
      * Sanitizes checkbox values
      */
     public function sanitize_checkbox($value) {
-        return ($value === 'true' || $value === '1' || $value === 1) ? 'true' : 'false';
+        // WordPress typically passes checkbox values as strings
+        return ($value === 'true') ? 'true' : 'false';
     }
     
     /**
@@ -169,13 +181,19 @@ class F1_Manager_Plugin {
      */
     public function settings_page() {
         // Prüfe ob Game-Dateien existieren - mit sicherer Pfadvalidierung
-        $game_path = wp_normalize_path(F1_MANAGER_GAME_DIR . 'index.html');
-        $base_path = wp_normalize_path(F1_MANAGER_GAME_DIR);
+        $game_path = F1_MANAGER_GAME_DIR . 'index.html';
+        $base_dir = F1_MANAGER_GAME_DIR;
         
-        // Sicherheitsprüfung: Stelle sicher, dass der Pfad innerhalb des erwarteten Verzeichnisses liegt
+        // Sicherheitsprüfung: Verwende realpath für echte Pfadvalidierung
+        $real_game_path = realpath($game_path);
+        $real_base_dir = realpath($base_dir);
+        
         $game_exists = false;
-        if (strpos($game_path, $base_path) === 0) {
-            $game_exists = file_exists($game_path);
+        if ($real_game_path !== false && $real_base_dir !== false) {
+            // Stelle sicher, dass der Pfad innerhalb des erwarteten Verzeichnisses liegt
+            if (strpos($real_game_path, $real_base_dir) === 0) {
+                $game_exists = file_exists($real_game_path);
+            }
         }
         ?>
         <div class="wrap">
