@@ -19,7 +19,8 @@ fi
 echo "✅ gcloud CLI found"
 
 # Check if user is logged in
-if ! gcloud auth list --filter=status:ACTIVE --format="value(account)" &> /dev/null; then
+ACTIVE_ACCOUNT=$(gcloud auth list --filter=status:ACTIVE --format="value(account)" 2>/dev/null)
+if [ -z "$ACTIVE_ACCOUNT" ]; then
     echo "⚠️  You need to login to Google Cloud"
     gcloud auth login
 fi

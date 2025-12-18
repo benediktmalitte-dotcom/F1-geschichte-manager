@@ -1,3 +1,6 @@
+# Production Dockerfile without SSL workaround
+# Use this if you're building in an environment with proper SSL certificates
+
 # Build stage
 FROM node:20-alpine AS builder
 
@@ -5,11 +8,6 @@ WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
-
-# NOTE: This SSL workaround is only needed in build environments with self-signed certificates.
-# In production Google Cloud environments, this is not required and packages are downloaded securely.
-# For production deployments, remove this line or use a trusted certificate authority.
-RUN npm config set strict-ssl false
 
 # Install ALL dependencies
 RUN npm install
