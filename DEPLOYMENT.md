@@ -99,6 +99,46 @@ In der `cloudbuild.yaml` können Sie folgende Parameter anpassen:
 
 ## Problembehandlung
 
+### Dockerfile nicht gefunden
+
+**Problem**: Cloud Build kann Dockerfile nicht finden
+```
+unable to prepare context: unable to evaluate symlinks in Dockerfile path: 
+lstat /workspace/Dockerfile: no such file or directory
+```
+
+**Mögliche Ursachen und Lösungen**:
+
+1. **Sie befinden sich nicht im Repository-Root-Verzeichnis**
+   ```bash
+   # Wechseln Sie ins Repository-Root
+   cd /pfad/zum/F1-geschichte-manager
+   
+   # Verifizieren Sie, dass Sie im richtigen Verzeichnis sind
+   ls -la Dockerfile cloudbuild.yaml nginx.conf
+   ```
+
+2. **Die Dateien wurden noch nicht gepullt**
+   ```bash
+   # Holen Sie die neuesten Änderungen vom PR-Branch
+   git fetch origin
+   git checkout copilot/fix-google-cloud-run-build
+   git pull origin copilot/fix-google-cloud-run-build
+   ```
+
+3. **Verifizierungsskript ausführen**
+   ```bash
+   # Macht das Skript ausführbar und führt es aus
+   chmod +x verify-cloud-build.sh
+   ./verify-cloud-build.sh
+   ```
+   
+   Das Skript prüft:
+   - ✓ Sind Sie im richtigen Verzeichnis?
+   - ✓ Sind alle erforderlichen Dateien vorhanden?
+   - ✓ Sind die Dateien in Git committed?
+   - ✓ Ist gcloud konfiguriert?
+
 ### Build schlägt fehl
 
 **Problem**: SSL-Zertifikat-Fehler während npm install

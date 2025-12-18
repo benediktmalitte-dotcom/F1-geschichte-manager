@@ -2,6 +2,14 @@
 
 ## 3 Schritte zum Deployment
 
+### 0️⃣ Vorbereitung (optional aber empfohlen)
+
+```bash
+# Verifizieren Sie, dass alles bereit ist
+chmod +x verify-cloud-build.sh
+./verify-cloud-build.sh
+```
+
 ### 1️⃣ Google Cloud einrichten
 
 ```bash
@@ -76,7 +84,15 @@ curl http://localhost:8080/health
 
 ## Probleme?
 
-Siehe [DEPLOYMENT.md](DEPLOYMENT.md) für Troubleshooting.
+### Häufige Fehler
+
+**"Dockerfile not found"** - Sie befinden sich nicht im Repository-Root:
+```bash
+cd /pfad/zum/F1-geschichte-manager
+./verify-cloud-build.sh  # Prüft alles
+```
+
+**Weitere Hilfe**: Siehe [DEPLOYMENT.md](DEPLOYMENT.md) für detailliertes Troubleshooting.
 
 ## Support
 
