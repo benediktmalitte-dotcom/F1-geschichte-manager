@@ -1,3 +1,6 @@
+# Production Dockerfile (without SSL workaround)
+# Use this if you're not deploying via Cloud Build or don't have SSL certificate issues
+
 # Build stage
 FROM node:20-alpine AS builder
 
@@ -7,11 +10,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-# Note: strict-ssl false is needed for Cloud Build environment with self-signed certs
-# This only affects the build process, not the final container
-RUN npm config set strict-ssl false && \
-    npm install && \
-    npm config set strict-ssl true
+RUN npm ci
 
 # Copy source files
 COPY . .

@@ -106,9 +106,17 @@ In der `cloudbuild.yaml` können Sie folgende Parameter anpassen:
 SELF_SIGNED_CERT_IN_CHAIN
 ```
 
-**Lösung**: Das Dockerfile enthält bereits die Lösung:
+**Lösung**: Das Standard-`Dockerfile` enthält bereits die Lösung für Cloud Build:
 ```dockerfile
-RUN npm config set strict-ssl false
+RUN npm config set strict-ssl false && \
+    npm install && \
+    npm config set strict-ssl true
+```
+
+**Hinweis**: Diese SSL-Konfiguration wird nur während des Build-Prozesses verwendet und betrifft nicht die finale Container-Sicherheit. Wenn Sie in einer Umgebung ohne SSL-Probleme deployen, können Sie `Dockerfile.production` verwenden:
+
+```bash
+docker build -f Dockerfile.production -t f1-manager .
 ```
 
 ### Container startet nicht
