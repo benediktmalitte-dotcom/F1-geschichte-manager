@@ -40,6 +40,10 @@ steps:
       - '512Mi'
       - '--cpu'
       - '1'
+      - '--timeout'
+      - '300'
+      - '--max-instances'
+      - '10'
 
 images:
   - 'gcr.io/$PROJECT_ID/f1-manager:$COMMIT_SHA'
