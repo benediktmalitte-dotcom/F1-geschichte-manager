@@ -7,6 +7,13 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
+# Note: strict-ssl false is needed for Cloud Build environment with self-signed certs
+# This only affects the build process, not the final container
+RUN npm config set strict-ssl false && \
+    npm install && \
+    npm config set strict-ssl true
+
+# Copy source files
 RUN npm install
 
 # Copy source code
@@ -21,6 +28,14 @@ FROM nginx:alpine
 # Copy built assets from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
 
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port 8080 (Cloud Run requirement)
+EXPOSE 8080
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
 # Copy nginx configuration template
 COPY nginx.conf /etc/nginx/conf.d/default.conf.template
 
