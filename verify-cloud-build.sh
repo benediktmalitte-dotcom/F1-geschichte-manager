@@ -16,6 +16,21 @@ fi
 echo "✓ In git repository"
 echo ""
 
+# Check current branch
+echo "Checking git branch..."
+CURRENT_BRANCH=$(git branch --show-current)
+if [ "$CURRENT_BRANCH" != "copilot/fix-google-cloud-run-build" ]; then
+    echo "  ❌ Wrong branch: $CURRENT_BRANCH"
+    echo "     You need to be on: copilot/fix-google-cloud-run-build"
+    echo ""
+    echo "  Switch to the correct branch:"
+    echo "     git checkout copilot/fix-google-cloud-run-build"
+    echo "     git pull origin copilot/fix-google-cloud-run-build"
+    exit 1
+fi
+echo "  ✓ On correct branch: $CURRENT_BRANCH"
+echo ""
+
 # Check for required files
 echo "Checking required files..."
 REQUIRED_FILES=(

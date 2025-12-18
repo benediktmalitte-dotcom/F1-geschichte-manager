@@ -2,13 +2,19 @@
 
 ## 3 Schritte zum Deployment
 
-### 0️⃣ Vorbereitung (optional aber empfohlen)
+### 0️⃣ Vorbereitung ⚠️ WICHTIG!
 
 ```bash
+# Zum richtigen Branch wechseln
+git checkout copilot/fix-google-cloud-run-build
+git pull origin copilot/fix-google-cloud-run-build
+
 # Verifizieren Sie, dass alles bereit ist
 chmod +x verify-cloud-build.sh
 ./verify-cloud-build.sh
 ```
+
+**Wichtig**: Die Deployment-Dateien sind NUR auf dem Branch `copilot/fix-google-cloud-run-build`, nicht auf `main`!
 
 ### 1️⃣ Google Cloud einrichten
 
@@ -84,9 +90,24 @@ curl http://localhost:8080/health
 
 ## Probleme?
 
-### Häufige Fehler
+### ⚠️ Häufigster Fehler: Falscher Branch
 
-**"Dockerfile not found"** - Sie befinden sich nicht im Repository-Root:
+**"Dockerfile not found"** oder **Build findet keine Dateien**:
+
+```bash
+# Prüfen Sie Ihren Branch:
+git branch --show-current
+
+# Wenn nicht "copilot/fix-google-cloud-run-build":
+git checkout copilot/fix-google-cloud-run-build
+git pull origin copilot/fix-google-cloud-run-build
+```
+
+**Wichtig**: Cloud Build verwendet den Code vom aktuell ausgecheckten Branch. Die Deployment-Dateien existieren nur auf `copilot/fix-google-cloud-run-build`, nicht auf `main`!
+
+### Andere Fehler
+
+**Nicht im Repository-Root**:
 ```bash
 cd /pfad/zum/F1-geschichte-manager
 ./verify-cloud-build.sh  # Prüft alles

@@ -109,7 +109,20 @@ lstat /workspace/Dockerfile: no such file or directory
 
 **Mögliche Ursachen und Lösungen**:
 
-1. **Sie befinden sich nicht im Repository-Root-Verzeichnis**
+1. **Sie befinden sich auf dem falschen Branch** ⚠️ **HÄUFIGSTER FEHLER**
+   ```bash
+   # Prüfen Sie, auf welchem Branch Sie sind
+   git branch --show-current
+   
+   # Sollte zeigen: copilot/fix-google-cloud-run-build
+   # Falls nicht, wechseln Sie:
+   git checkout copilot/fix-google-cloud-run-build
+   git pull origin copilot/fix-google-cloud-run-build
+   ```
+   
+   **Erklärung**: Der main Branch hat noch keine Deployment-Dateien. Cloud Build verwendet den Code vom aktuell ausgecheckten Branch. Wenn Sie auf `main` sind, findet Cloud Build kein Dockerfile!
+
+2. **Sie befinden sich nicht im Repository-Root-Verzeichnis**
    ```bash
    # Wechseln Sie ins Repository-Root
    cd /pfad/zum/F1-geschichte-manager
@@ -118,15 +131,7 @@ lstat /workspace/Dockerfile: no such file or directory
    ls -la Dockerfile cloudbuild.yaml nginx.conf
    ```
 
-2. **Die Dateien wurden noch nicht gepullt**
-   ```bash
-   # Holen Sie die neuesten Änderungen vom PR-Branch
-   git fetch origin
-   git checkout copilot/fix-google-cloud-run-build
-   git pull origin copilot/fix-google-cloud-run-build
-   ```
-
-3. **Verifizierungsskript ausführen**
+3. **Verifizierungsskript ausführen** (empfohlen!)
    ```bash
    # Macht das Skript ausführbar und führt es aus
    chmod +x verify-cloud-build.sh
@@ -134,10 +139,11 @@ lstat /workspace/Dockerfile: no such file or directory
    ```
    
    Das Skript prüft:
-   - ✓ Sind Sie im richtigen Verzeichnis?
-   - ✓ Sind alle erforderlichen Dateien vorhanden?
-   - ✓ Sind die Dateien in Git committed?
-   - ✓ Ist gcloud konfiguriert?
+   - ✓ Richtiger Branch? (copilot/fix-google-cloud-run-build)
+   - ✓ Richtiges Verzeichnis?
+   - ✓ Alle erforderlichen Dateien vorhanden?
+   - ✓ Dateien in Git committed?
+   - ✓ gcloud konfiguriert?
 
 ### Build schlägt fehl
 
