@@ -1,126 +1,86 @@
-# Google Cloud Run - Schnellstart
+# Quick Start Guide - F1 Manager Deployment
 
-## 3 Schritte zum Deployment
-
-### 0️⃣ Vorbereitung ⚠️ WICHTIG!
+## TL;DR - Schnellstart für Google Cloud Run
 
 ```bash
-# Zum richtigen Branch wechseln
-git checkout copilot/fix-google-cloud-run-build
-git pull origin copilot/fix-google-cloud-run-build
+# 1. Google Cloud CLI installieren (falls noch nicht geschehen)
+# https://cloud.google.com/sdk/docs/install
 
-# Verifizieren Sie, dass alles bereit ist
-chmod +x verify-cloud-build.sh
-./verify-cloud-build.sh
-```
-
-**Wichtig**: Die Deployment-Dateien sind NUR auf dem Branch `copilot/fix-google-cloud-run-build`, nicht auf `main`!
-
-### 1️⃣ Google Cloud einrichten
-
-```bash
-# Anmelden
+# 2. Anmelden und Projekt einrichten
 gcloud auth login
+gcloud config set project IHR-PROJEKT-ID
 
-# Projekt setzen (ersetzen Sie PROJEKT-ID)
-gcloud config set project PROJEKT-ID
+# 3. APIs aktivieren
+gcloud services enable run.googleapis.com cloudbuild.googleapis.com
 
-# APIs aktivieren
-gcloud services enable cloudbuild.googleapis.com run.googleapis.com
-```
-
-### 2️⃣ Deployen
-
-```bash
-# Mit Cloud Build (automatisch)
+# 4. Deployen mit einem Befehl
 gcloud builds submit --config=cloudbuild.yaml
+
+# Fertig! 🎉 Sie erhalten eine URL wie:
+# https://f1-manager-xxxxx-xx.a.run.app
 ```
 
-### 3️⃣ Fertig! 🎉
-
-Die URL wird nach erfolgreichem Build angezeigt:
-```
-https://f1-manager-XXXXXXXXXX-ew.a.run.app
-```
-
-## Alternative: Manuelles Deployment
+## Alternative: Automatisches Deployment-Skript
 
 ```bash
-# Build
-docker build -t gcr.io/PROJEKT-ID/f1-manager .
-
-# Push
-docker push gcr.io/PROJEKT-ID/f1-manager
-
-# Deploy
-gcloud run deploy f1-manager \
-  --image gcr.io/PROJEKT-ID/f1-manager \
-  --region europe-west1 \
-  --platform managed \
-  --allow-unauthenticated
+./deploy.sh
 ```
 
-## Lokaler Test
+Das Skript führt Sie interaktiv durch alle Schritte!
+
+## Lokaler Test mit Docker
 
 ```bash
-# Build
-docker build -t f1-test .
+# Image bauen
+docker build -t f1-manager .
 
-# Run
-docker run -p 8080:8080 f1-test
+# Ausführen
+docker run -p 8080:8080 f1-manager
 
-# Test
-curl http://localhost:8080/health
+# Öffnen: http://localhost:8080
 ```
 
-## Wichtige Dateien
+## Dateien in diesem Projekt
 
-| Datei | Zweck |
-|-------|-------|
-| `Dockerfile` | Container-Definition mit SSL-Fix |
-| `Dockerfile.production` | Ohne SSL-Fix (optional) |
-| `nginx.conf` | Web-Server Konfiguration |
-| `cloudbuild.yaml` | CI/CD Pipeline |
-| `DEPLOYMENT.md` | Detaillierte Anleitung |
+- **`Dockerfile`** - Docker Container Definition (mit SSL Workaround)
+- **`Dockerfile.production`** - Production Dockerfile (ohne SSL Workaround)
+- **`nginx.conf`** - Nginx Webserver Konfiguration
+- **`cloudbuild.yaml`** - Cloud Build & Cloud Run Deployment
+- **`app.yaml`** - App Engine Deployment Konfiguration
+- **`deploy.sh`** - Interaktives Deployment-Skript
+- **`DEPLOYMENT.md`** - Ausführliche Deployment-Anleitung
+- **`README.md`** - Projekt-Dokumentation
 
-## Kosten
+## Deployment-Optionen im Vergleich
 
-- **Free Tier**: 2M Requests/Monat gratis
-- **Danach**: ~5€/Monat (typisch)
+| Feature | Cloud Run | App Engine |
+|---------|-----------|------------|
+| **Kosten (Hobby)** | Kostenlos* | Kostenlos* |
+| **Skalierung** | Automatisch 0→∞ | Automatisch |
+| **Setup** | Einfach | Sehr einfach |
+| **Docker** | ✅ Ja | ⚠️ Optional |
+| **Serverless** | ✅ Ja | ✅ Ja |
+| **Empfohlen für** | Moderne Apps | Einfache Apps |
 
-## Probleme?
+*Im kostenlosen Kontingent
 
-### ⚠️ Häufigster Fehler: Falscher Branch
+## Häufige Probleme
 
-**"Dockerfile not found"** oder **Build findet keine Dateien**:
+**"gcloud: command not found"**
+→ Google Cloud CLI installieren: https://cloud.google.com/sdk/docs/install
 
-```bash
-# Prüfen Sie Ihren Branch:
-git branch --show-current
+**"Docker build fehlgeschlagen"**
+→ Verwenden Sie `Dockerfile.production` statt `Dockerfile` wenn SSL-Fehler auftreten
 
-# Wenn nicht "copilot/fix-google-cloud-run-build":
-git checkout copilot/fix-google-cloud-run-build
-git pull origin copilot/fix-google-cloud-run-build
-```
+**"Permission denied"**
+→ Stellen Sie sicher, dass Sie Owner/Editor-Rechte für das Projekt haben
 
-**Wichtig**: Cloud Build verwendet den Code vom aktuell ausgecheckten Branch. Die Deployment-Dateien existieren nur auf `copilot/fix-google-cloud-run-build`, nicht auf `main`!
+## Support & Dokumentation
 
-### Andere Fehler
+- 📖 Ausführliche Anleitung: Siehe `DEPLOYMENT.md`
+- 🌐 Google Cloud Docs: https://cloud.google.com/docs
+- 💬 GitHub Issues: Für Probleme bitte ein Issue öffnen
 
-**Nicht im Repository-Root**:
-```bash
-cd /pfad/zum/F1-geschichte-manager
-./verify-cloud-build.sh  # Prüft alles
-```
+---
 
-**Weitere Hilfe**: Siehe [DEPLOYMENT.md](DEPLOYMENT.md) für detailliertes Troubleshooting.
-
-## Support
-
-```bash
-# Logs anzeigen
-gcloud run services logs read f1-manager --region europe-west1
-
-# Status prüfen
-gcloud run services describe f1-manager --region europe-west1
-```
+**Viel Erfolg! 🏎️💨**

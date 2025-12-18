@@ -2,75 +2,158 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# F1 Geschichte Manager
+# Formel1-Geschichte.de Manager
 
-Ein interaktives Formel-1-Management-Spiel als Browser-Anwendung.
+Ein interaktives F1-Management-Spiel, das lokal oder in der Cloud bereitgestellt werden kann.
 
-## Lokale Entwicklung
+## 🏎️ Lokale Entwicklung
 
-**Voraussetzungen:** Node.js (Version 20 oder höher)
+**Voraussetzungen:** Node.js 18 oder höher
 
-1. Dependencies installieren:
+1. Abhängigkeiten installieren:
    ```bash
    npm install
    ```
 
-2. Optional: `GEMINI_API_KEY` in [.env.local](.env.local) setzen
-
-3. Development-Server starten:
+2. Entwicklungsserver starten:
    ```bash
    npm run dev
    ```
 
-4. Im Browser öffnen: http://localhost:3000
+3. Im Browser öffnen: `http://localhost:3000`
 
-## Production Build
+## 🚀 Google Cloud Deployment
+
+Diese Anwendung kann auf zwei Arten in Google Cloud bereitgestellt werden:
+
+### Option 1: Google Cloud Run (Empfohlen)
+
+Cloud Run ist eine serverlose Plattform, die automatisch skaliert und nur für die tatsächliche Nutzung Kosten verursacht.
+
+**Manuelle Bereitstellung:**
+
+1. Google Cloud CLI installieren: https://cloud.google.com/sdk/docs/install
+
+2. Anmelden und Projekt auswählen:
+   ```bash
+   gcloud auth login
+   gcloud config set project IHR_PROJEKT_ID
+   ```
+
+3. Erforderliche APIs aktivieren:
+   ```bash
+   gcloud services enable run.googleapis.com
+   gcloud services enable cloudbuild.googleapis.com
+   ```
+
+4. Mit Cloud Build deployen:
+   ```bash
+   gcloud builds submit --config=cloudbuild.yaml
+   ```
+
+**Automatisches Deployment-Skript:**
+
+Alternativ können Sie das mitgelieferte Skript verwenden:
 
 ```bash
-npm run build
+./deploy.sh
 ```
 
-Die Build-Artefakte werden im `dist/` Ordner erstellt.
+Das Skript führt Sie durch den Deployment-Prozess und wählt automatisch die richtige Konfiguration.
 
-## Google Cloud Run Deployment
+### Option 2: Google App Engine
 
-Diese Anwendung ist für Google Cloud Run optimiert.
+App Engine ist eine vollständig verwaltete Plattform für die Bereitstellung von Webanwendungen.
 
-### Schnellstart
+1. Anwendung bauen:
+   ```bash
+   npm install
+   npm run build
+   ```
+
+2. Zu App Engine deployen:
+   ```bash
+   gcloud app deploy app.yaml
+   ```
+
+## 📦 Docker
+
+Die Anwendung kann auch lokal mit Docker ausgeführt werden:
 
 ```bash
-# Bei Google Cloud anmelden
-gcloud auth login
+# Image bauen
+docker build -t f1-manager .
 
-# Projekt setzen
-gcloud config set project IHRE-PROJEKT-ID
-
-# Deployen mit Cloud Build
-gcloud builds submit --config=cloudbuild.yaml
+# Container starten
+docker run -p 8080:8080 f1-manager
 ```
 
-Für eine detaillierte Anleitung siehe [DEPLOYMENT.md](DEPLOYMENT.md).
+Anwendung ist dann verfügbar unter: `http://localhost:8080`
 
-### Was ist enthalten?
+## 📁 Projektstruktur
 
-- ✅ **Dockerfile** - Multi-stage Build mit nginx für Production
-- ✅ **cloudbuild.yaml** - Automatisches CI/CD für Cloud Run
-- ✅ **nginx.conf** - Production-Web-Server mit Gzip, Security Headers, SPA-Routing
-- ✅ **.dockerignore** & **.gcloudignore** - Optimierte Build-Kontexte
+```
+.
+├── index.tsx           # Haupt-Anwendungslogik
+├── components/         # React-Komponenten
+├── services/          # Spiellogik und Services
+├── Dockerfile         # Container-Definition
+├── nginx.conf         # Nginx-Konfiguration für Production
+├── cloudbuild.yaml    # Google Cloud Build Konfiguration
+├── app.yaml           # App Engine Konfiguration
+├── deploy.sh          # Automatisches Deployment-Skript
+└── package.json       # NPM-Abhängigkeiten
+```
 
-## Technologie-Stack
+## 🛠️ Technologie-Stack
 
-- **React 19** - UI Framework
-- **TypeScript** - Typsicherheit
-- **Vite** - Build Tool
-- **nginx** - Production Web Server
-- **Google Cloud Run** - Serverless Container Platform
+- **Frontend:** React 19, TypeScript
+- **Build-Tool:** Vite
+- **Styling:** TailwindCSS
+- **Container:** Docker + Nginx
+- **Cloud:** Google Cloud Run / App Engine
 
-## Kosten
+## 📝 Konfiguration
 
-- **Free Tier**: 2 Millionen Requests/Monat kostenlos
-- **Geschätzte Kosten**: < 5€/Monat bei moderater Nutzung
+### Umgebungsvariablen
 
-## Support
+Für die lokale Entwicklung können Sie eine `.env.local` Datei erstellen:
 
-Bei Problemen mit dem Deployment siehe [DEPLOYMENT.md](DEPLOYMENT.md) für Troubleshooting-Tipps.
+```
+# Beispielkonfiguration (falls benötigt)
+NODE_ENV=development
+```
+
+### Produktionseinstellungen
+
+Die Produktionsumgebung verwendet Nginx als Webserver und ist optimiert für:
+- Gzip-Komprimierung
+- Asset-Caching
+- Security Headers
+- SPA-Routing
+
+## 🌐 Nach dem Deployment
+
+Nach erfolgreichem Deployment erhalten Sie eine URL wie:
+- Cloud Run: `https://f1-manager-xxxxx-xx.a.run.app`
+- App Engine: `https://IHR_PROJEKT_ID.appspot.com`
+
+## 💰 Kosten
+
+- **Cloud Run:** Pay-per-use, kostenlos für geringe Nutzung (inkl. 2 Millionen kostenlose Anfragen/Monat)
+- **App Engine:** Kostenlos für F1-Instanzen mit geringer Nutzung
+
+## 🔒 Sicherheit
+
+Die Anwendung enthält grundlegende Sicherheitsheader:
+- X-Frame-Options
+- X-Content-Type-Options
+- X-XSS-Protection
+
+## 📞 Support
+
+Bei Fragen oder Problemen öffnen Sie bitte ein Issue auf GitHub.
+
+## Original AI Studio Link
+
+View your app in AI Studio: https://ai.studio/apps/drive/12S1xI9vUYilwqQeanrYbyxcyATGxDHIA

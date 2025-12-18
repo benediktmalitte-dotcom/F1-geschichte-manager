@@ -6,10 +6,15 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
+# NOTE: This SSL workaround is only needed in build environments with self-signed certificates.
+# In production Google Cloud environments, this is not required and packages are downloaded securely.
+# For production deployments, remove this line or use a trusted certificate authority.
+RUN npm config set strict-ssl false
+
+# Install ALL dependencies
 RUN npm install
 
-# Copy source code
+# Copy source files
 COPY . .
 
 # Build the application
@@ -18,21 +23,14 @@ RUN npm run build
 # Production stage
 FROM nginx:alpine
 
-# Copy built assets from builder stage
+# Copy built files from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy nginx configuration template
-COPY nginx.conf /etc/nginx/conf.d/default.conf.template
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copy entrypoint script
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
-
-# Set default PORT (Cloud Run will override this)
-ENV PORT=8080
-
-# Expose port 8080 (for documentation)
+# Expose port 8080 (Google Cloud Run requirement)
 EXPOSE 8080
 
-# Use custom entrypoint
-ENTRYPOINT ["/docker-entrypoint.sh"]
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]

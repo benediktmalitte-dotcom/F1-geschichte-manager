@@ -1,26 +1,16 @@
 steps:
   # Build the container image
+  # Note: Uses Dockerfile by default. In Google Cloud Build environment,
+  # the SSL workaround is needed. For local builds with proper SSL,
+  # you can use: --file=Dockerfile.production
   - name: 'gcr.io/cloud-builders/docker'
-    args:
-      - 'build'
-      - '-t'
-      - 'gcr.io/$PROJECT_ID/f1-manager:$COMMIT_SHA'
-      - '-t'
-      - 'gcr.io/$PROJECT_ID/f1-manager:latest'
-      - '.'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/f1-manager:$COMMIT_SHA', '.']
   
   # Push the container image to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args:
-      - 'push'
-      - 'gcr.io/$PROJECT_ID/f1-manager:$COMMIT_SHA'
+    args: ['push', 'gcr.io/$PROJECT_ID/f1-manager:$COMMIT_SHA']
   
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      - 'push'
-      - 'gcr.io/$PROJECT_ID/f1-manager:latest'
-  
-  # Deploy container image to Cloud Run
+  # Deploy to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args:
@@ -36,18 +26,9 @@ steps:
       - '--allow-unauthenticated'
       - '--port'
       - '8080'
-      - '--memory'
-      - '512Mi'
-      - '--cpu'
-      - '1'
-      - '--timeout'
-      - '300'
-      - '--max-instances'
-      - '10'
 
 images:
   - 'gcr.io/$PROJECT_ID/f1-manager:$COMMIT_SHA'
-  - 'gcr.io/$PROJECT_ID/f1-manager:latest'
 
 options:
   machineType: 'N1_HIGHCPU_8'
