@@ -1,0 +1,38 @@
+runtime: nodejs20
+
+env: standard
+
+instance_class: F2
+
+automatic_scaling:
+  min_instances: 0
+  max_instances: 10
+  target_cpu_utilization: 0.65
+
+handlers:
+  - url: /assets
+    static_dir: dist/assets
+    secure: always
+    http_headers:
+      Cache-Control: "public, max-age=31536000, immutable"
+
+  - url: /.*
+    static_files: dist/index.html
+    upload: dist/index.html
+    secure: always
+    http_headers:
+      X-Frame-Options: "SAMEORIGIN"
+      X-Content-Type-Options: "nosniff"
+      X-XSS-Protection: "1; mode=block"
+
+skip_files:
+  - ^(.*/)?#.*#$
+  - ^(.*/)?.*~$
+  - ^(.*/)?.*\.py[co]$
+  - ^(.*/)?.*/RCS/.*$
+  - ^(.*/)?\..*$
+  - ^(.*/)?.*\.bak$
+  - ^node_modules/.*$
+  - ^src/.*$
+  - ^components/.*$
+  - ^services/.*$
