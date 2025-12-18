@@ -31,8 +31,8 @@ RUN chmod +x /docker-entrypoint.sh
 # Set default PORT (Cloud Run will override this)
 ENV PORT=8080
 
-# Expose the port
-EXPOSE ${PORT}
+# Expose port 8080 (for documentation)
+EXPOSE 8080
 
 # Use custom entrypoint
 ENTRYPOINT ["/docker-entrypoint.sh"]
