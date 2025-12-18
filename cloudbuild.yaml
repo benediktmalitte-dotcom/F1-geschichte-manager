@@ -1,5 +1,8 @@
 steps:
   # Build the container image
+  # Note: Uses Dockerfile by default. In Google Cloud Build environment,
+  # the SSL workaround is needed. For local builds with proper SSL,
+  # you can use: --file=Dockerfile.production
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/$PROJECT_ID/f1-manager:$COMMIT_SHA', '.']
   
